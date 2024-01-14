@@ -51,6 +51,7 @@ internal data class Knot(
 
 internal data class LoadingState(
         val documentRoot: IJsonValue,
+        var vocabularies: List<String>,
         private val anchors: MutableMap<String, Knot> = mutableMapOf(),
         var baseURI: URI
 ) {
@@ -178,7 +179,23 @@ class SchemaLoader(
         }
     }
 
-    private var loadingState: LoadingState = LoadingState(schemaJson, baseURI = URI(config.initialBaseURI))
+    private var loadingState: LoadingState = LoadingState(schemaJson, baseURI = URI(config.initialBaseURI), vocabularies = findVocabulariesInMetaSchema(schemaJson))
+
+    private fun findVocabulariesInMetaSchema(schemaJson: IJsonValue): List<String> {
+        return when (schemaJson) {
+            is IJsonBoolean -> emptyList()
+            is IJsonObj -> {
+                return schemaJson[Keyword.SCHEMA.value]
+                    ?.requireString()
+                    ?.let { config.schemaClient.getParsed(URI(it.value)).requireObject()["\$vocabulary"]
+                        ?.requireObject()?.properties?.keys
+                        ?.map { it.requireString().value }
+                        ?.toList()
+                    } ?: emptyList()
+            }
+            else -> TODO()
+        }
+    }
 
     operator fun invoke(): Schema = loadRootSchema()
     fun load(): Schema = loadRootSchema()
@@ -489,7 +506,8 @@ class SchemaLoader(
                     dynamicAnchor = dynamicAnchor,
                     unevaluatedItemsSchema = unevaluatedItemsSchema,
                     unevaluatedPropertiesSchema = unevaluatedPropertiesSchema,
-                    unprocessedProperties = unprocessedProperties
+                    unprocessedProperties = unprocessedProperties,
+                    vocabularies = loadingState.vocabularies
             )
         }
     }
