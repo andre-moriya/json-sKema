@@ -155,7 +155,7 @@ class JsonParser {
                 val propName = parseString(true)
                 walker.skipWhitespaces().consume(":").skipWhitespaces()
                 val propValue = parseValue()
-                nestingPath.removeLast()
+                nestingPath.removeAt(nestingPath.size - 1)
                 properties.put(propName, propValue)
                 if (walker.curr() == ',') {
                     walker.forward()
