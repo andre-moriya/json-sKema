@@ -1,13 +1,13 @@
 package com.github.erosb.jsonsKema
 
 enum class SpecificationVersion {
-    DRAFT_2020_12
+    DRAFT_2020_12,
 }
 
 enum class Keyword(
     val value: String,
     internal val hasMapLikeSemantics: Boolean = false,
-    internal val specificationVersion: SpecificationVersion = SpecificationVersion.DRAFT_2020_12
+    internal val specificationVersion: SpecificationVersion = SpecificationVersion.DRAFT_2020_12,
 ) {
     ID("\$id"),
     ANCHOR("\$anchor"),
@@ -16,7 +16,7 @@ enum class Keyword(
     REF("\$ref"),
     DEFS("\$defs", true),
     SCHEMA("\$schema"),
-//    VOCABULARY("\$vocabulary"),
+    VOCABULARY("\$vocabulary"),
     MIN_LENGTH("minLength"),
     MAX_LENGTH("maxLength"),
     ALL_OF("allOf", true),
@@ -62,5 +62,5 @@ enum class Keyword(
     MAX_PROPERTIES("maxProperties"),
     PROPERTY_NAMES("propertyNames"),
     PATTERN("pattern"),
-    FORMAT("format")
+    FORMAT("format"),
 }
