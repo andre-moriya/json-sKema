@@ -111,7 +111,7 @@ internal class PrepopulatedSchemaClient(
         URI("https://json-schema.org/draft/2020-12/meta/meta-data") to readFromClassPath("/json-meta-schemas/draft2020-12/meta-data.json"),
         URI("https://json-schema.org/draft/2020-12/meta/format-annotation") to readFromClassPath("/json-meta-schemas/draft2020-12/format-annotation.json"),
         URI("https://json-schema.org/draft/2020-12/meta/content") to readFromClassPath("/json-meta-schemas/draft2020-12/content.json")
-    )// + additionalMappings
+    ) + additionalMappings
 
     override fun get(uri: URI): InputStream {
         return mappings[uri]

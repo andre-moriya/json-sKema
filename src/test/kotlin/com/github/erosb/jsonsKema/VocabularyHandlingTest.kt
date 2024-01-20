@@ -59,25 +59,37 @@ class VocabularyHandlingTest {
 
     @Test
     fun `format validation is enabled by meta-schema`() {
-        val schema = SchemaLoader(JsonParser("""
-            {
-                "format": "email"
-            }
-        """)()
-        , config = createDefaultConfig(mapOf(
-                URI("http://my-meta-schema") to """
+        val schema =
+            SchemaLoader(
+                JsonParser(
+                    """
                     {
-                        "$vocabulary": {
-                        
-                        }                       
+                        "$schema": "http://my-meta-schema",
+                        "format": "email"
                     }
-                """.trimIndent()
-        ))
-        )() as CompositeSchema
+                """
+                )(), config =
+                    createDefaultConfig(
+                        mapOf(
+                            URI("http://my-meta-schema") to
+                                """
+                                {
+                                    "$vocabulary": {
+                                        "https://json-schema.org/draft/2020-12/vocab/format-assertion": true,   
+                                    }                       
+                                }
+                                """.trimIndent(),
+                        ),
+                    ),
+            )() as CompositeSchema
 
-        val actual = Validator.forSchema(schema).validate(JsonParser("""
-           "not-an-email" 
-        """)())
+        val actual =
+            Validator.forSchema(schema).validate(
+                JsonParser(
+                    """
+                        "not-an-email" 
+                    """)()
+            )
 
         assertNotNull(actual)
     }

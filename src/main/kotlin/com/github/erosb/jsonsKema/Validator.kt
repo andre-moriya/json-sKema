@@ -116,7 +116,9 @@ private class DefaultValidator(
         false
     else
         when (rootSchema) {
-        is CompositeSchema -> rootSchema.vocabularies.isEmpty() || rootSchema.vocabularies.contains("")
+        is CompositeSchema -> rootSchema.vocabularies.isEmpty() || rootSchema.vocabularies.contains(
+            "https://json-schema.org/draft/2020-12/vocab/format-assertion"
+        )
         else -> false
     }
 
