@@ -11,9 +11,12 @@ data class SchemaLoaderConfig(val schemaClient: SchemaClient, val initialBaseURI
 
 class SchemaLoadingException(msg: String, cause: Throwable) : RuntimeException(msg, cause)
 
-internal fun createDefaultConfig() = SchemaLoaderConfig(
+internal fun createDefaultConfig(additionalMappings: Map<URI, String> = mapOf()) = SchemaLoaderConfig(
         schemaClient = MemoizingSchemaClient(
-            ClassPathAwareSchemaClient(DefaultSchemaClient())
+            PrepopulatedSchemaClient(
+                ClassPathAwareSchemaClient(DefaultSchemaClient()),
+                additionalMappings
+            )
         )
 )
 

@@ -7,7 +7,7 @@ import org.mockito.Spy
 import org.mockito.junit.jupiter.MockitoExtension
 
 val schema = "\$schema" //Keyword.SCHEMA
-//val vocabulary = Keyword.VOCABULARY
+val vocabulary = "\$vocabulary"
 
 
 @ExtendWith(MockitoExtension::class)
