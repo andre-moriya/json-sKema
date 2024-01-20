@@ -6,6 +6,7 @@ import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.util.*
 
+
 fun interface SchemaClient {
     fun get(uri: URI): InputStream
 
@@ -21,6 +22,7 @@ fun interface SchemaClient {
 }
 
 internal class DefaultSchemaClient : SchemaClient {
+
     override fun get(uri: URI): InputStream {
         try {
             val u = toURL(uri)
@@ -36,12 +38,15 @@ internal class DefaultSchemaClient : SchemaClient {
         try {
             return uri.toURL()
         } catch (e: IllegalArgumentException) {
-            throw IllegalArgumentException("URI '$uri' can't be converted to URL: ${e.message}", e)
+            throw IllegalArgumentException("URI '$uri' can't be converted to URL: ${e.message}", e);
         }
     }
 }
 
+
 internal class ClassPathAwareSchemaClient(private val fallbackClient: SchemaClient) : SchemaClient {
+
+
     override fun get(url: URI): InputStream {
         val maybeString = handleProtocol(url.toString())
         return if (maybeString.isPresent) {
@@ -59,14 +64,13 @@ internal class ClassPathAwareSchemaClient(private val fallbackClient: SchemaClie
     private fun handleProtocol(url: String): Optional<String> {
         return HANDLED_PREFIXES.stream().filter { prefix: String? ->
             url.startsWith(
-                prefix!!,
+                prefix!!
             )
         }
             .map { prefix: String ->
-                "/" +
-                    url.substring(
-                        prefix.length,
-                    )
+                "/" + url.substring(
+                    prefix.length
+                )
             }
             .findFirst()
     }
@@ -76,17 +80,18 @@ internal class ClassPathAwareSchemaClient(private val fallbackClient: SchemaClie
     }
 }
 
+
 internal class MemoizingSchemaClient(private val delegate: SchemaClient) : SchemaClient {
+
     val cache: MutableMap<URI, ByteArray> = mutableMapOf()
 
-    override fun get(uri: URI): InputStream =
-        ByteArrayInputStream(
-            cache.computeIfAbsent(uri) {
-                val out = ByteArrayOutputStream()
-                delegate.get(it).transferTo(out)
-                return@computeIfAbsent out.toByteArray()
-            },
-        )
+    override fun get(uri: URI): InputStream = ByteArrayInputStream(
+        cache.computeIfAbsent(uri) {
+            val out = ByteArrayOutputStream()
+            delegate.get(it).transferTo(out)
+            return@computeIfAbsent out.toByteArray()
+        }
+    )
 }
 
 internal fun readFromClassPath(path: String): String =
@@ -94,19 +99,19 @@ internal fun readFromClassPath(path: String): String =
 
 internal class PrepopulatedSchemaClient(
     private val fallbackClient: SchemaClient,
-    additionalMappings: Map<URI, String> = mapOf(),
-) : SchemaClient {
-    private val mappings: Map<URI, String> =
-        mapOf(
-            URI("https://json-schema.org/draft/2020-12/schema") to readFromClassPath("/json-meta-schemas/draft2020-12/schema.json"),
-            URI("https://json-schema.org/draft/2020-12/meta/core") to readFromClassPath("/json-meta-schemas/draft2020-12/core.json"),
-            URI("https://json-schema.org/draft/2020-12/meta/validation") to readFromClassPath("/json-meta-schemas/draft2020-12/validation.json"),
-            URI("https://json-schema.org/draft/2020-12/meta/applicator") to readFromClassPath("/json-meta-schemas/draft2020-12/applicator.json"),
-            URI("https://json-schema.org/draft/2020-12/meta/unevaluated") to readFromClassPath("/json-meta-schemas/draft2020-12/unevaluated.json"),
-            URI("https://json-schema.org/draft/2020-12/meta/meta-data") to readFromClassPath("/json-meta-schemas/draft2020-12/meta-data.json"),
-            URI("https://json-schema.org/draft/2020-12/meta/format-annotation") to readFromClassPath("/json-meta-schemas/draft2020-12/format-annotation.json"),
-            URI("https://json-schema.org/draft/2020-12/meta/content") to readFromClassPath("/json-meta-schemas/draft2020-12/content.json"),
-        ) + additionalMappings
+    additionalMappings: Map<URI, String> = mapOf()
+    ) : SchemaClient {
+
+    private val mappings: Map<URI, String> = mapOf(
+        URI("https://json-schema.org/draft/2020-12/schema") to readFromClassPath("/json-meta-schemas/draft2020-12/schema.json"),
+        URI("https://json-schema.org/draft/2020-12/meta/core") to readFromClassPath("/json-meta-schemas/draft2020-12/core.json"),
+        URI("https://json-schema.org/draft/2020-12/meta/validation") to readFromClassPath("/json-meta-schemas/draft2020-12/validation.json"),
+        URI("https://json-schema.org/draft/2020-12/meta/applicator") to readFromClassPath("/json-meta-schemas/draft2020-12/applicator.json"),
+        URI("https://json-schema.org/draft/2020-12/meta/unevaluated") to readFromClassPath("/json-meta-schemas/draft2020-12/unevaluated.json"),
+        URI("https://json-schema.org/draft/2020-12/meta/meta-data") to readFromClassPath("/json-meta-schemas/draft2020-12/meta-data.json"),
+        URI("https://json-schema.org/draft/2020-12/meta/format-annotation") to readFromClassPath("/json-meta-schemas/draft2020-12/format-annotation.json"),
+        URI("https://json-schema.org/draft/2020-12/meta/content") to readFromClassPath("/json-meta-schemas/draft2020-12/content.json")
+    )// + additionalMappings
 
     override fun get(uri: URI): InputStream {
         return mappings[uri]
@@ -114,4 +119,5 @@ internal class PrepopulatedSchemaClient(
             ?.let { ByteArrayInputStream(it) }
             ?: fallbackClient.get(uri)
     }
+
 }
