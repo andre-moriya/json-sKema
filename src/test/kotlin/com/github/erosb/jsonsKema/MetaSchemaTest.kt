@@ -6,7 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Spy
 import org.mockito.junit.jupiter.MockitoExtension
 
-val schema = "\$schema"
+val schema = "\$schema" //Keyword.SCHEMA
+//val vocabulary = Keyword.VOCABULARY
+
 
 @ExtendWith(MockitoExtension::class)
 class MetaSchemaTest {
