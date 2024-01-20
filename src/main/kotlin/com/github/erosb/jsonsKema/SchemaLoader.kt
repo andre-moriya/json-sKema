@@ -11,12 +11,9 @@ data class SchemaLoaderConfig(val schemaClient: SchemaClient, val initialBaseURI
 
 class SchemaLoadingException(msg: String, cause: Throwable) : RuntimeException(msg, cause)
 
-internal fun createDefaultConfig(additionalMappings: Map<URI, String> = mapOf()) = SchemaLoaderConfig(
+internal fun createDefaultConfig() = SchemaLoaderConfig(
         schemaClient = MemoizingSchemaClient(
-            PrepopulatedSchemaClient(
-                ClassPathAwareSchemaClient(DefaultSchemaClient()),
-                additionalMappings
-            )
+            ClassPathAwareSchemaClient(DefaultSchemaClient())
         )
 )
 
@@ -190,8 +187,7 @@ class SchemaLoader(
             is IJsonObj -> {
                 return schemaJson[Keyword.SCHEMA.value]
                     ?.requireString()
-                    ?.let { config.schemaClient.getParsed(URI(it.value))
-                        .requireObject()["\$vocabulary"]
+                    ?.let { config.schemaClient.getParsed(URI(it.value)).requireObject()["\$vocabulary"]
                         ?.requireObject()?.properties?.keys
                         ?.map { it.requireString().value }
                         ?.toList()

@@ -48,7 +48,7 @@ abstract class SchemaVisitor<P> {
                 return visitCompositeSchema(schema)
             }
         } finally {
-            val popped = dynamicScope.removeLast()
+            val popped = dynamicScope.removeAt(dynamicScope.size - 1)
             if (popped !== schema) {
                 throw IllegalStateException()
             }

@@ -116,7 +116,7 @@ private class DefaultValidator(
         false
     else
         when (rootSchema) {
-        is CompositeSchema -> rootSchema.vocabularies.isEmpty() || rootSchema.vocabularies.contains("")
+        is CompositeSchema -> rootSchema.vocabularies.contains("")
         else -> false
     }
 
