@@ -2,8 +2,6 @@ package com.github.erosb.jsonsKema
 
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 
 internal fun getAsBigDecimal(number: Any): BigDecimal {
     return if (number is BigDecimal) {
@@ -19,10 +17,10 @@ internal fun getAsBigDecimal(number: Any): BigDecimal {
 }
 
 enum class FormatValidationPolicy {
-    ALWAYS, NEVER, DEPENDS_ON_VOCABULARIES
+    ALWAYS, NEVER, DEPENDS_ON_VOCABULARY
 }
 
-data class ValidatorConfig(val validateFormat: FormatValidationPolicy = FormatValidationPolicy.DEPENDS_ON_VOCABULARIES) {
+data class ValidatorConfig(val validateFormat: FormatValidationPolicy = FormatValidationPolicy.DEPENDS_ON_VOCABULARY) {
 
 }
 
@@ -37,7 +35,7 @@ interface Validator {
 
         @JvmStatic
         fun forSchema(schema: Schema): Validator {
-            return create(schema, ValidatorConfig(FormatValidationPolicy.DEPENDS_ON_VOCABULARIES))
+            return create(schema, ValidatorConfig(FormatValidationPolicy.DEPENDS_ON_VOCABULARY))
         }
     }
 
