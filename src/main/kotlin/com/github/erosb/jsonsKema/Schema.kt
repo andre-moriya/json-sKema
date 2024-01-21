@@ -22,7 +22,7 @@ data class CompositeSchema(
     val unevaluatedItemsSchema: Schema? = null,
     val unevaluatedPropertiesSchema: Schema? = null,
     val unprocessedProperties: Map<IJsonString, IJsonValue> = emptyMap(),
-    val vocabularies: List<String> = emptyList()
+    val vocabulary: List<String> = emptyList()
 ) : Schema(location) {
     override fun <P> accept(visitor: SchemaVisitor<P>) = visitor.internallyVisitCompositeSchema(this)
     override fun subschemas() = subschemas

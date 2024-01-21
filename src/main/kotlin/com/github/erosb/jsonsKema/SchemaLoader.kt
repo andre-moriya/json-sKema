@@ -53,10 +53,10 @@ internal data class Knot(
 }
 
 internal data class LoadingState(
-        val documentRoot: IJsonValue,
-        var vocabularies: List<String>,
-        private val anchors: MutableMap<String, Knot> = mutableMapOf(),
-        var baseURI: URI
+    val documentRoot: IJsonValue,
+    var vocabulary: List<String>,
+    private val anchors: MutableMap<String, Knot> = mutableMapOf(),
+    var baseURI: URI
 ) {
 
     fun registerRawSchemaByAnchor(id: String, json: IJsonValue): Knot {
@@ -182,7 +182,7 @@ class SchemaLoader(
         }
     }
 
-    private var loadingState: LoadingState = LoadingState(schemaJson, baseURI = URI(config.initialBaseURI), vocabularies = findVocabulariesInMetaSchema(schemaJson))
+    private var loadingState: LoadingState = LoadingState(schemaJson, baseURI = URI(config.initialBaseURI), vocabulary = findVocabulariesInMetaSchema(schemaJson))
 
     private fun findVocabulariesInMetaSchema(schemaJson: IJsonValue): List<String> {
         return when (schemaJson) {
@@ -513,7 +513,7 @@ class SchemaLoader(
                     unevaluatedItemsSchema = unevaluatedItemsSchema,
                     unevaluatedPropertiesSchema = unevaluatedPropertiesSchema,
                     unprocessedProperties = unprocessedProperties,
-                    vocabularies = loadingState.vocabularies
+                    vocabulary = loadingState.vocabulary
             )
         }
     }

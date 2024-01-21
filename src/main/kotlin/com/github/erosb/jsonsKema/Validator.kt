@@ -17,7 +17,28 @@ internal fun getAsBigDecimal(number: Any): BigDecimal {
 }
 
 enum class FormatValidationPolicy {
-    ALWAYS, NEVER, DEPENDS_ON_VOCABULARY
+    /**
+     * Validation against the "format" keyword is always enabled, irrespective of
+     * the meta-schema contents.
+     */
+    ALWAYS,
+
+    /**
+     * Validation against the "format" keyword is never done, irrespective of
+     * the meta-schema contents.
+     */
+    NEVER,
+
+    /**
+     * Validation against the "format" keyword is enabled only if the meta-schema
+     * declares @{code https://json-schema.org/draft/2020-12/vocab/format-assertion}
+     * in its @{code $vocabularies} object.
+     *
+     * Be aware that this is the default behavior, and the draft2020-12 meta-schema
+     * does NOT declare the format-assertion vocabulary, hence format validation will be
+     * disabled.
+     */
+    DEPENDS_ON_VOCABULARY
 }
 
 data class ValidatorConfig(val validateFormat: FormatValidationPolicy = FormatValidationPolicy.DEPENDS_ON_VOCABULARY) {
@@ -114,7 +135,7 @@ private class DefaultValidator(
         false
     else
         when (rootSchema) {
-        is CompositeSchema -> rootSchema.vocabularies.isEmpty() || rootSchema.vocabularies.contains(
+        is CompositeSchema -> rootSchema.vocabulary.isEmpty() || rootSchema.vocabulary.contains(
             "https://json-schema.org/draft/2020-12/vocab/format-assertion"
         )
         else -> false
