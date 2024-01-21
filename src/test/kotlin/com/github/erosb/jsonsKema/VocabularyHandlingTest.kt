@@ -61,26 +61,17 @@ class VocabularyHandlingTest {
     fun `format validation is enabled by meta-schema`() {
         val schema =
             SchemaLoader(
-                JsonParser(
-                    """
-                    {
-                        "$schema": "http://my-meta-schema",
-                        "format": "email"
-                    }
-                """
-                )(), config =
+                JsonParser("""
+                    {"$schema": "http://my-meta-schema", "format": "email"}
+                """)(), config =
                     createDefaultConfig(
                         mapOf(
                             URI("http://my-meta-schema") to
-                                """
-                                {
-                                    "$vocabulary": {
+                                """{"$vocabulary": {
                                         "https://json-schema.org/draft/2020-12/vocab/format-assertion": true,   
-                                    }                       
-                                }
-                                """.trimIndent(),
-                        ),
-                    ),
+                                   }}""".trimIndent()
+                        )
+                    )
             )() as CompositeSchema
 
         val actual =
@@ -96,11 +87,30 @@ class VocabularyHandlingTest {
 
     @Test
     fun `vocab loading only true valued vocabs are loaded`() {
+        val schema =
+            SchemaLoader(
+                JsonParser("""
+                    {"$schema": "http://my-meta-schema", "format": "email"}
+                """)(), config =
+                createDefaultConfig(
+                    mapOf(
+                        URI("http://my-meta-schema") to
+                                """{"$vocabulary": {
+                                        "https://json-schema.org/draft/2020-12/vocab/format-annotation": true,
+                                        "https://json-schema.org/draft/2020-12/vocab/format-assertion": false   
+                                   }}""".trimIndent()
+                    )
+                )
+            )() as CompositeSchema
 
-    }
+        val actual =
+            Validator.forSchema(schema).validate(
+                JsonParser(
+                    """
+                        "not-an-email" 
+                    """)()
+            )
 
-    @Test
-    fun `vocabularies is not an object`() {
-
+        assertNull(actual)
     }
 }

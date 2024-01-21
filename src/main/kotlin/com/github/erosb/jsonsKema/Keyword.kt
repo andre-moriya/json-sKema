@@ -16,7 +16,7 @@ enum class Keyword(
     REF("\$ref"),
     DEFS("\$defs", true),
     SCHEMA("\$schema"),
-//    VOCABULARY("\$vocabulary"),
+    VOCABULARY("\$vocabulary"),
     MIN_LENGTH("minLength"),
     MAX_LENGTH("maxLength"),
     ALL_OF("allOf", true),

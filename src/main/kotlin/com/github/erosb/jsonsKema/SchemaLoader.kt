@@ -190,8 +190,11 @@ class SchemaLoader(
             is IJsonObj -> {
                 return schemaJson[Keyword.SCHEMA.value]
                     ?.requireString()
-                    ?.let { config.schemaClient.getParsed(URI(it.value)).requireObject()["\$vocabulary"]
-                        ?.requireObject()?.properties?.keys
+                    ?.let { config.schemaClient.getParsed(URI(it.value))
+                        .requireObject()[Keyword.VOCABULARY.value]
+                        ?.requireObject()?.properties
+                        ?.filter { it.value.requireBoolean().value }
+                        ?.keys
                         ?.map { it.requireString().value }
                         ?.toList()
                     } ?: emptyList()
