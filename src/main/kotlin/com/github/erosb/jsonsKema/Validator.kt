@@ -41,7 +41,13 @@ enum class FormatValidationPolicy {
     DEPENDS_ON_VOCABULARY
 }
 
-data class ValidatorConfig(val validateFormat: FormatValidationPolicy = FormatValidationPolicy.DEPENDS_ON_VOCABULARY) {
+enum class ReadWriteContext {
+    READ, WRITE, NONE
+}
+
+data class ValidatorConfig(
+    val validateFormat: FormatValidationPolicy = FormatValidationPolicy.DEPENDS_ON_VOCABULARY,
+    val readWriteContext: ReadWriteContext = ReadWriteContext.NONE) {
 
 }
 
@@ -230,6 +236,9 @@ private class DefaultValidator(
                 return@withOtherInstance super.visitCompositeSchema(schema)
             }
         } else {
+            if (schema.readOnly?.value == true && config.readWriteContext == ReadWriteContext.WRITE)  {
+                return ReadOnlyValidationFailure(schema, instance)
+            }
             return super.visitCompositeSchema(schema)
         }
     }
