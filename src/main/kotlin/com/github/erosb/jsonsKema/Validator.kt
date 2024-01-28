@@ -239,6 +239,9 @@ private class DefaultValidator(
             if (schema.readOnly?.value == true && config.readWriteContext == ReadWriteContext.WRITE)  {
                 return ReadOnlyValidationFailure(schema, instance)
             }
+            if (schema.writeOnly?.value == true && config.readWriteContext == ReadWriteContext.READ) {
+                return WriteOnlyValidationFailure(schema, instance)
+            }
             return super.visitCompositeSchema(schema)
         }
     }

@@ -1,5 +1,9 @@
 package com.github.erosb.jsonsKema
 
+//data class ReadOnlySchema(
+////    val
+//)
+
 data class ReadOnlyValidationFailure(
     override val schema: Schema,
     override val instance: IJsonValue,
