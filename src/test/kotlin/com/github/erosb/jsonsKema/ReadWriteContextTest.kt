@@ -112,4 +112,83 @@ class ReadWriteContextTest {
 
         assertNull(actual)
     }
+
+    @Test
+    fun `readOnly false does not impact validation`() {
+        val schema = SchemaLoader(JsonParser("""
+            {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": false
+                    }
+                }
+            }
+        """)())()
+
+        val validator = Validator.create(schema, ValidatorConfig(
+            readWriteContext = ReadWriteContext.WRITE
+        ))
+
+        val actual = validator.validate(JsonParser("""
+           {
+            "id": 3
+           } 
+        """)())
+
+        assertNull(actual)
+    }
+
+    @Test
+    fun `writeOnly false does not impact validation`() {
+        val schema = SchemaLoader(JsonParser("""
+            {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "writeOnly": false
+                    }
+                }
+            }
+        """)())()
+
+        val validator = Validator.create(schema, ValidatorConfig(
+            readWriteContext = ReadWriteContext.READ
+        ))
+
+        val actual = validator.validate(JsonParser("""
+           {
+            "id": 3
+           } 
+        """)())
+
+        assertNull(actual)
+    }
+
+    @Test
+    fun `readOnly and writeOnly does not impact NONE context`()  {
+        val schema = SchemaLoader(JsonParser("""
+            {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "writeOnly": true
+                    },
+                    "name": {
+                        "readOnly": true
+                    }
+                }
+            }
+        """)())()
+
+        val validator = Validator.forSchema(schema)
+
+        val actual = validator.validate(JsonParser("""
+           {
+            "id": 3, "name": "asd"
+           } 
+        """)())
+
+        assertNull(actual)
+    }
 }

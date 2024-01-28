@@ -6,7 +6,12 @@ data class ReadOnlySchema(
     override fun <P> accept(visitor: SchemaVisitor<P>): P? = visitor.visitReadOnlySchema(this)
 }
 
-internal val readOnlyLoader: KeywordLoader = { ReadOnlySchema(it.location) }
+internal val readOnlyLoader: KeywordLoader = {
+    if (it.keywordValue.requireBoolean().value)
+        ReadOnlySchema(it.location)
+    else
+        null
+}
 
 data class ReadOnlyValidationFailure(
     override val schema: Schema,
