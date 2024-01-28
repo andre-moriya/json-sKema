@@ -126,6 +126,7 @@ abstract class SchemaVisitor<P> {
     }
 
     open fun visitPropertyNamesSchema(propertyNamesSchema: PropertyNamesSchema): P? = visitChildren(propertyNamesSchema)
+    open fun visitReadOnlySchema(readOnlySchema: ReadOnlySchema): P? = visitChildren(readOnlySchema)
 }
 
 internal class SchemaNotFoundException(expectedKey: String, actualKey: String) :

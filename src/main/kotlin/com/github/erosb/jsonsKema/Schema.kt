@@ -12,7 +12,7 @@ data class CompositeSchema(
     val title: IJsonString? = null,
     val description: IJsonString? = null,
     val deprecated: IJsonBoolean? = null,
-    val readOnly: IJsonBoolean? = null,
+//    val readOnly: IJsonBoolean? = null,
     val writeOnly: IJsonBoolean? = null,
     val default: IJsonValue? = null,
     val dynamicRef: DynamicReference? = null,

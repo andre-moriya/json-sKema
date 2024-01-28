@@ -236,9 +236,9 @@ private class DefaultValidator(
                 return@withOtherInstance super.visitCompositeSchema(schema)
             }
         } else {
-            if (schema.readOnly?.value == true && config.readWriteContext == ReadWriteContext.WRITE)  {
-                return ReadOnlyValidationFailure(schema, instance)
-            }
+//            if (schema.readOnly?.value == true && config.readWriteContext == ReadWriteContext.WRITE)  {
+//                return ReadOnlyValidationFailure(schema, instance)
+//            }
             if (schema.writeOnly?.value == true && config.readWriteContext == ReadWriteContext.READ) {
                 return WriteOnlyValidationFailure(schema, instance)
             }
@@ -668,6 +668,13 @@ private class DefaultValidator(
             } else null
         }
         return null
+    }
+
+    override fun visitReadOnlySchema(readOnlySchema: ReadOnlySchema): ValidationFailure? {
+        return if (instance == null || config.readWriteContext == ReadWriteContext.READ)
+            null
+        else
+            ReadOnlyValidationFailure(readOnlySchema, instance)
     }
 
     override fun accumulate(parent: Schema, previous: ValidationFailure?, current: ValidationFailure?): ValidationFailure? {

@@ -104,11 +104,13 @@ class SchemaLoaderTest {
                     FalseSchema(SourceLocation(8, 11, pointer("#/if"))),
                     TrueSchema(SourceLocation(9, 13, pointer("#/then"))),
                     null,
-                    SourceLocation(8, 5, pointer("#/if")))),
+                    SourceLocation(8, 5, pointer("#/if"))),
+                ReadOnlySchema(SourceLocation(5, 5, pointer("readOnly")))
+            ),
             location = UnknownSource,
             title = JsonString("My title"),
             description = JsonString("My description"),
-            readOnly = JsonBoolean(true),
+//            readOnly = JsonBoolean(true),
             writeOnly = JsonBoolean(false),
             deprecated = JsonBoolean(false),
             default = JsonNull(),
@@ -116,6 +118,7 @@ class SchemaLoaderTest {
         )
         assertThat(actual).usingRecursiveComparison()
             .ignoringFieldsOfTypes(SourceLocation::class.java)
+            .ignoringCollectionOrderInFields("subschemas")
             .isEqualTo(expected)
     }
 

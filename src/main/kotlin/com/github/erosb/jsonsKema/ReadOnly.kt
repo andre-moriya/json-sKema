@@ -1,8 +1,12 @@
 package com.github.erosb.jsonsKema
 
-//data class ReadOnlySchema(
-////    val
-//)
+data class ReadOnlySchema(
+    override val location: SourceLocation
+) : Schema(location) {
+    override fun <P> accept(visitor: SchemaVisitor<P>): P? = visitor.visitReadOnlySchema(this)
+}
+
+internal val readOnlyLoader: KeywordLoader = { ReadOnlySchema(it.location) }
 
 data class ReadOnlyValidationFailure(
     override val schema: Schema,
