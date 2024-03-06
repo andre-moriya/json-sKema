@@ -1,5 +1,6 @@
 package com.github.erosb.jsonsKema
 
+import org.apache.commons.validator.routines.UrlValidator
 import java.io.*
 import java.net.URI
 import java.net.URL
@@ -26,6 +27,7 @@ internal class DefaultSchemaClient : SchemaClient {
     override fun get(uri: URI): InputStream {
         try {
             val u = toURL(uri)
+            validUrl(u)
             val conn = u.openConnection()
             val location = conn.getHeaderField("Location")
             return location?.let { get(URI(location)) } ?: conn.content as InputStream
@@ -34,11 +36,17 @@ internal class DefaultSchemaClient : SchemaClient {
         }
     }
 
+    private fun validUrl(u: URL) {
+        if (!UrlValidator().isValid(u.toString())) {
+            throw IllegalArgumentException("URL '$u' is not valid.")
+        }
+    }
+
     private fun toURL(uri: URI): URL {
         try {
             return uri.toURL()
         } catch (e: IllegalArgumentException) {
-            throw IllegalArgumentException("URI '$uri' can't be converted to URL: ${e.message}", e);
+            throw IllegalArgumentException("URI '$uri' can't be converted to URL: ${e.message}", e)
         }
     }
 }
@@ -47,13 +55,13 @@ internal class DefaultSchemaClient : SchemaClient {
 internal class ClassPathAwareSchemaClient(private val fallbackClient: SchemaClient) : SchemaClient {
 
 
-    override fun get(url: URI): InputStream {
-        val maybeString = handleProtocol(url.toString())
+    override fun get(uri: URI): InputStream {
+        val maybeString = handleProtocol(uri.toString())
         return if (maybeString.isPresent) {
             val stream = loadFromClasspath(maybeString.get())
-            stream ?: throw UncheckedIOException(IOException(String.format("Could not find %s", url)))
+            stream ?: throw UncheckedIOException(IOException(String.format("Could not find %s", uri)))
         } else {
-            fallbackClient.get(url)
+            fallbackClient.get(uri)
         }
     }
 
